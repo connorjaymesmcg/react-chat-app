@@ -14,4 +14,4 @@ app.get('/', (req, res) => {
   res.send('General Kenobi');
 });
 
-app.listen()
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`))

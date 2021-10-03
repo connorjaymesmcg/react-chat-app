@@ -4,13 +4,16 @@ import axios from 'axios';
 
 import signInImage from '../assets/Linth.png';
 
+const cookies = new Cookies();
+
 const initialState = {
   fullName: '',
   username: '',
   phoneNumber: '',
   password: '',
   confirmPassword: '',
-  avatarUrl: ''
+  avatarUrl: '',
+
 };
 
 const Auth = () => {
@@ -21,11 +24,32 @@ const Auth = () => {
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
 
-    console.log(form);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const { fullName, username, password, phoneNumber, avatarUrl } = form;
+
+    const URL = `http://localhost:5000/auth`;
+
+    const { data: { token, userId, hashedPassword } } = await axios.post(`${URL}/${isSignup ? 'signup' : 'login'}`, {
+      username, password, fullName, phoneNumber, avatarUrl
+    });
+
+    cookies.set('token', token);
+    cookies.set('username', username);
+    cookies.set('fullName', fullName);
+    cookies.set('userId', userId);
+
+    if (isSignup) {
+      cookies.set('phoneNumber', phoneNumber);
+      cookies.set('username', username);
+      cookies.set('avatarUrl', avatarUrl);
+      cookies.set('hashedPassword', hashedPassword);
+    }
+
+    window.location.reload();
   };
 
 
